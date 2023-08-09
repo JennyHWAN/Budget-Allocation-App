@@ -9,12 +9,14 @@ const AllocationForm = (props) => {
     const [action, setAction] = useState('');
 
     const submitEvent = () => {
+        if (name === 'Choose...') {alert("careful, you haven't choose the Department value!");}
+        if(cost > remaining) {
+            alert("The value cannot exceed remaining funds  £"+remaining);
+            setCost("");
+            return;
+        }
 
-            if(cost > remaining) {
-                alert("The value cannot exceed remaining funds  £"+remaining);
-                setCost("");
-                return;
-            }
+        // if (e.target.value === null) {alert("value empty");};
 
         const expense = {
             name: name,
@@ -25,12 +27,23 @@ const AllocationForm = (props) => {
                 type: 'RED_EXPENSE',
                 payload: expense,
             });
+            setCost("");
         } else {
                 dispatch({
                     type: 'ADD_EXPENSE',
                     payload: expense,
                 });
+                setCost("");
             }
+    };
+
+    // to handle the input value without changing any state
+    const handleChange = (e) => {
+        const regex = /^[0-9\b]+$/;
+        if (e.target.value === '' || regex.test(e.target.value)) {
+            setCost(e.target.value);
+        }
+        else {alert("please input number only");}
     };
 
     return (
@@ -44,11 +57,11 @@ const AllocationForm = (props) => {
                   <select className="custom-select" id="inputGroupSelect01" onChange={(event) => setName(event.target.value)}>
                         <option defaultValue>Choose...</option>
                         <option value="Marketing" name="marketing"> Marketing</option>
-                <option value="Sales" name="sales">Sales</option>
-                <option value="Finance" name="finance">Finance</option>
-                <option value="HR" name="hr">HR</option>
-                <option value="IT" name="it">IT</option>
-                <option value="Admin" name="admin">Admin</option>
+                        <option value="Sales" name="sales">Sales</option>
+                        <option value="Finance" name="finance">Finance</option>
+                        <option value="HR" name="hr">HR</option>
+                        <option value="IT" name="it">IT</option>
+                        <option value="Admin" name="admin">Admin</option>
                   </select>
 
                     <div className="input-group-prepend" style={{ marginLeft: '2rem' }}>
@@ -61,11 +74,13 @@ const AllocationForm = (props) => {
 
                     <input
                         required='required'
-                        type='number'
+                        // type='number'
+                        // pattern='[0-9]*'
                         id='cost'
                         value={cost}
                         style={{ marginLeft: '2rem' , size: 10}}
-                        onChange={(event) => setCost(event.target.value)}>
+                        // onChange={(event) => setCost(event.target.value)}>
+                        onChange={handleChange}>
                         </input>
 
                     <button className="btn btn-primary" onClick={submitEvent} style={{ marginLeft: '2rem' }}>
